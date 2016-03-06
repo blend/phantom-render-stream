@@ -118,7 +118,7 @@ var forcePrintMedia = function() {
 var renders = 0, maxRenders = 500;
 var loop = function() {
   var line = system.stdin.readLine();
-  if (!line.trim()) return phantom.exit(0); 
+  if (!line.trim()) return phantom.exit(0);
 
   try {
     line = JSON.parse(line);
@@ -158,7 +158,21 @@ var loop = function() {
     {
       format: line.paperFormat || 'A4',
       orientation: line.orientation || 'portrait',
-      margin: line.margin || '0cm'
+      margin: line.margin || '0cm',
+      header: line.header && {
+        height: line.header.height || '0cm',
+        contents: phantom.callback(function(pageNum, numPages) {
+          var contents = line.header.contents || '';
+          return ((contents.split('%pageNum%').join(pageNum)).split('%numPages%')).join(numPages);
+        })
+      } || null,
+      footer: line.footer && {
+        height: line.footer.height || '0cm',
+        contents: phantom.callback(function(pageNum, numPages) {
+          var contents = line.footer.contents || '';
+          return ((contents.split('%pageNum%').join(pageNum)).split('%numPages%')).join(numPages);
+        })
+      } || null
     };
 
   if (line.userAgent) page.settings.userAgent = line.userAgent;
