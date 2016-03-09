@@ -154,6 +154,9 @@ var loop = function() {
     height: line.height || 960
   };
 
+  var pageNumTpl = line.pageNum || '%pageNum%';
+  var numPagesTpl = line.numPages || '%numPages%';
+
   page.paperSize = line.paperSize ||
     {
       format: line.paperFormat || 'A4',
@@ -163,14 +166,14 @@ var loop = function() {
         height: line.header.height || '0cm',
         contents: phantom.callback(function(pageNum, numPages) {
           var contents = line.header.contents || '';
-          return ((contents.split('%pageNum%').join(pageNum)).split('%numPages%')).join(numPages);
+          return ((contents.split(pageNumTpl).join(pageNum)).split(numPagesTpl)).join(numPages);
         })
       } || null,
       footer: line.footer && {
         height: line.footer.height || '0cm',
         contents: phantom.callback(function(pageNum, numPages) {
           var contents = line.footer.contents || '';
-          return ((contents.split('%pageNum%').join(pageNum)).split('%numPages%')).join(numPages);
+          return ((contents.split(pageNumTpl).join(pageNum)).split(numPagesTpl)).join(numPages);
         })
       } || null
     };
